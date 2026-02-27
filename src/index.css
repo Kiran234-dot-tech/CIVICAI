@@ -373,18 +373,50 @@ textarea:focus {
   padding: 4px 12px;
   border-radius: 20px;
   letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
 }
 
 .api-badge.success {
   background: rgba(34, 197, 94, 0.1);
   color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
 .api-badge.warning {
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.3);
+  animation: badgePulse 2s infinite;
+}
+
+.api-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.api-badge.warning:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
+
+.api-badge.success:hover {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #22c55e;
+}
+
+@keyframes badgePulse {
+  0% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.7;
+  }
 }
 
 .upload-wrapper {
