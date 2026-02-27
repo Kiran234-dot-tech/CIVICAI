@@ -1,0 +1,28 @@
+{
+  "rights": [
+    {
+      "id": "tenant_1",
+      "category": "Tenant Rights",
+      "right": "Right to a habitable home",
+      "explanation": "Every tenant has the legal right to a home that is safe and fit for human habitation, including basic amenities like water and electricity.",
+      "action": "If your landlord fails to maintain basic standards, you can give a written notice and, if unresolved, approach the local rent control board.",
+      "consult": "Consult a lawyer if the landlord tries to evict you forcefully or cuts off essential services."
+    },
+    {
+      "id": "consumer_1",
+      "category": "Consumer Rights",
+      "right": "Right to be Informed",
+      "explanation": "Consumers have the right to be informed about the quality, quantity, potency, purity, standard, and price of goods or services.",
+      "action": "Always check labels, ask for receipts, and compare prices. Use the National Consumer Helpline for grievances.",
+      "consult": "Consult a lawyer if you suffer significant financial loss or physical harm due to a defective product or service deficiency."
+    },
+    {
+      "id": "police_1",
+      "category": "Police Procedure",
+      "right": "Right to know the grounds of arrest",
+      "explanation": "Any person being arrested has the right to be informed of the specific reason or grounds for their arrest immediately.",
+      "action": "Ask the police officer clearly why you are being detained. They must show an arrest warrant in non-cognizable cases.",
+      "consult": "Consult a lawyer immediately after arrest to handle bail and legal representation."
+    }
+  ]
+}
