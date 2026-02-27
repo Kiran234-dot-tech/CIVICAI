@@ -105,14 +105,19 @@ const App = () => {
         <p className="subtitle">Justice Made Accessible. Multilingually.</p>
 
         <div className="api-badge-container">
-          <span
+          <button
             className={`api-badge ${apiKey ? 'success' : 'warning'}`}
-            onClick={apiKey ? clearConnection : () => handleSearch()}
-            style={{ cursor: 'pointer' }}
+            onClick={apiKey ? clearConnection : () => {
+              const key = prompt("Please enter your Groq API Key to connect:");
+              if (key && key.trim()) {
+                localStorage.setItem('CIVICAI_GROQ_KEY', key.trim());
+                setApiKey(key.trim());
+              }
+            }}
             title={apiKey ? "Click to Disconnect" : "Click to Connect"}
           >
-            {apiKey ? 'CONNECTED' : 'OFFLINE (TAP TO CONNECT)'}
-          </span>
+            {apiKey ? 'CONNECTED' : 'OFFLINE (CLICK TO CONNECT)'}
+          </button>
         </div>
       </header>
 
