@@ -6,13 +6,17 @@ import { getLegalAwareness } from './services/geminiService';
 import { extractTextFromFile } from './services/fileExtractionService';
 import './index.css';
 
-function App() {
+const App = () => {
   const [lang, setLang] = useState({ code: 'en', name: 'English', label: 'English' });
   const [query, setQuery] = useState('');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [extracting, setExtracting] = useState(false);
-  const apiKey = import.meta.env.VITE_GROQ_API_KEY || '';
+
+  // Use state for API key to allow manual override on live site
+  const [apiKey, setApiKey] = useState(
+    localStorage.getItem('CIVICAI_GROQ_KEY') || import.meta.env.VITE_GROQ_API_KEY || ''
+  );
 
   useEffect(() => {
     if (apiKey) {
@@ -58,13 +62,17 @@ function App() {
   const handleSearch = async (textToSearch = query) => {
     if (!textToSearch.trim()) return;
     if (!apiKey) {
-      console.warn("Groq API Key is missing. Please set VITE_GROQ_API_KEY in .env");
-      setResponse({
-        Fundamental_Right: "Configuration Error",
-        Key_Points: "API Key is not configured.",
-        Actionable_Step: "The developer needs to provide the API Key in the environment settings.",
-        When_To_Seek_Legal_Help: "Please check back later once connectivity is restored."
-      });
+      const userKey = prompt("Please enter your Groq API Key to connect:");
+      if (userKey) {
+        localStorage.setItem('CIVICAI_GROQ_KEY', userKey);
+        setApiKey(userKey);
+        // Retry search with the new key
+        setLoading(true);
+        setResponse(null);
+        const result = await getLegalAwareness(textToSearch, lang, userKey, 'chat');
+        setResponse(result);
+        setLoading(false);
+      }
       return;
     }
 
@@ -75,10 +83,17 @@ function App() {
     setLoading(false);
   };
 
+  const clearConnection = () => {
+    if (window.confirm("Disconnect API Key and go back offline?")) {
+      localStorage.removeItem('CIVICAI_GROQ_KEY');
+      setApiKey('');
+    }
+  };
+
   const placeholders = {
     en: "Describe your legal question or upload a document...",
     hi: "अपनी कानूनी समस्या बताएं या दस्तावेज़ अपलोड करें...",
-    te: "మీ చట్టపరమైన ప్రశ్నను వివరించండి లేదా ఫైల్‌ను అప్‌లోಡ್ చేయండి...",
+    te: "మీ చట్టపరమైన ప్రశ్నను వివరించండి లేదా ఫైల్‌ను అప్‌లోడ్ చేయండి...",
     ta: "உங்கள் சட்டக் கேள்வியை விவரிக்கவும் அல்லது ஆவணத்தைப் பதிவேற்றவும்...",
     kn: "ನಿಮ್ಮ ಕಾನೂನು ಸಮಸ್ಯೆಯನ್ನು ವಿವರಿಸಿ ಅಥವಾ ದಾಖಲೆಯನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ..."
   };
@@ -90,8 +105,13 @@ function App() {
         <p className="subtitle">Justice Made Accessible. Multilingually.</p>
 
         <div className="api-badge-container">
-          <span className={`api-badge ${apiKey ? 'success' : 'warning'}`}>
-            {apiKey ? 'CONNECTED' : 'OFFLINE'}
+          <span
+            className={`api-badge ${apiKey ? 'success' : 'warning'}`}
+            onClick={apiKey ? clearConnection : () => handleSearch()}
+            style={{ cursor: 'pointer' }}
+            title={apiKey ? "Click to Disconnect" : "Click to Connect"}
+          >
+            {apiKey ? 'CONNECTED' : 'OFFLINE (TAP TO CONNECT)'}
           </span>
         </div>
       </header>
@@ -138,7 +158,7 @@ function App() {
           </div>
         </div>
 
-        <ResponseCard data={response} lang={lang} />
+        {response && <ResponseCard data={response} lang={lang} />}
 
         <div className="disclaimer">
           {lang.code === 'en' ? 'CIVICAI provides legal awareness only. This is not professional legal advice.' : (lang.code === 'hi' ? 'CIVICAI केवल कानूनी जागरूकता प्रदान करता है। यह पेशेवर कानूनी सलाह नहीं है।' : (lang.code === 'te' ? 'CIVICAI చట్టపరమైన అవగాహనను మాత్రమే అందిస్తుంది. ఇది వృత్తిపరమైన చట్టపరమైన సలహా కాదు.' : 'CIVICAI provides legal awareness only.'))}
